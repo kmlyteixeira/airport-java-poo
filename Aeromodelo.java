@@ -4,7 +4,7 @@ public abstract class Aeromodelo {
     private String marca;
     private String modelo;
 
-    public Aeromodelo(int id, String marca, String modelo) throws Exception {
+    protected Aeromodelo(int id, String marca, String modelo) throws Exception {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
