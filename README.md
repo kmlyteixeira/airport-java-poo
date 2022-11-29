@@ -29,17 +29,6 @@ Este controle será constituído de uma aplicação com Listar, Incluir, Alterar
 * Pista
 * Voo
 
-As devidas informações de cada entidade estão detalhadass no MER e Diagrama de Classes abaixo. A utilização dos mesmos se trata de uma REFERÊNCIA podendo ser ajustado conforme a necessidade individual de cada trabalho.
-
-### MER
-
-![MER da Aplicação](MER_Aeroporto.png)
-
-### Diagrama de Classes
-
-![Diagrama de Classes da Aplicação](diagrama%20de%20classe.png)
-
-
 ### Regras
 * Cada avião possui uma única companhia;
 * Somente serão criados aviões para companhias já cadastradas;
@@ -58,3 +47,12 @@ As devidas informações de cada entidade estão detalhadass no MER e Diagrama d
 * O repositório deverá ser PRIVADO até a data da entrega
 * Cada dia de desenvolvimento (23/11, 28/11, 29/11 e 30/11) deverá representar um COMMIT e PULL REQUEST diferente de desenvolvimento, com a finalidade de avaliar o andamento de cada entrega
 * Data Final: 06/12
+
+----------------
+TODO LIST - Para não esquecer
+
+1 - Ajustar Metodos de Alteração - usar um tipo genérico e tratar no método
+2 - Ajustar ToString - buscar super para compor impressão
+3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo
+4 - Capacidade e Velocidade - UNSIGNED
+5 - Comentários + revisão no código

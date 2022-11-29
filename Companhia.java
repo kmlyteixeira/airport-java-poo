@@ -42,26 +42,25 @@ public class Companhia {
         this.cnpj = cnpj;
     }
 
-    public static void ImprimirCompanhias() throws Exception {
+    public static void imprimirCompanhias() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM companhia");
         stmt.execute();
     }
 
-    public static void AlterarCompanhia(int id, String nome) throws Exception {
+    public static void getCompanhiaById(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM companhia WHERE id = ?");
+        stmt.setInt(1, id);
+        stmt.execute();
+    }
+    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
+    public static void alterarCompanhia(int id, String nome) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET nome = ? WHERE id = ?");
         stmt.setString(1, nome);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void AlterarCompanhia(String cnpj, int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET cnpj = ? WHERE id = ?");
-        stmt.setString(1, cnpj);
-        stmt.setInt(2, id);
-        stmt.execute();
-    }
-
-    public static void ExcluirCompanhia(int id) throws Exception {
+    public static void excluirCompanhia(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM companhia WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
@@ -69,6 +68,6 @@ public class Companhia {
 
     @Override
     public String toString() {
-        return "Companhia : ID = " + getId() + ", Nome = " + getNome() + ", CNPJ = " + getCnpj();
+        return "Companhia: ID: " + getId() + ", Nome: " + getNome() + ", CNPJ: " + getCnpj();
     }
 }

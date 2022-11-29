@@ -31,20 +31,39 @@ public class Hangar {
         this.local = local;
     }
 
-    public static void ImprimirHangares() throws Exception {
+    public static void imprimirHangares() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar");
         stmt.execute();
     }
 
-    public static void AlterarHangar(int id, String local) throws Exception {
+    public static void adicionarAviaoAoHangar(int idHangar, Aviao aviao) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET aviao_id = ? WHERE id = ?");
+        stmt.setInt(1, aviao.getId());
+        stmt.setInt(2, idHangar);
+        stmt.execute();
+    }
+
+    public static void removerAviaoDoHangar(int idHangar) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET aviao_id = NULL WHERE id = ?");
+        stmt.setInt(1, idHangar);
+        stmt.execute();
+    }
+
+    public static void alterarHangar(int id, String local) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
         stmt.setString(1, local);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void ExcluirHangar(int id) throws Exception {
+    public static void excluirHangar(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM hangar WHERE id = ?");
+        stmt.setInt(1, id);
+        stmt.execute();
+    }
+
+    public static void getHangarById(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
     }
@@ -53,15 +72,4 @@ public class Hangar {
     public String toString() {
         return "Hangar: " + "ID: " + id + ", Local: " + local;
     }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || !(object instanceof Hangar)) {
-            return false;
-        }
-        final Hangar other = (Hangar) object;
-
-        return this.id == other.id;
-    }
-
 }

@@ -30,21 +30,33 @@ public class Pista {
         this.nome = nome;
     }
 
-    public static void ImprimirPistas() throws Exception {
+    public static void imprimirPistas() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM pista");
         stmt.execute();
     }
 
-    public static void AlterarPista(int id, String nome) throws Exception {
+    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
+    public static void alterarPista(int id, String nome) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE pista SET nome = ? WHERE id = ?");
         stmt.setString(1, nome);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void DeletarPista(int id) throws Exception {
+    public static void deletarPista(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM pista WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+    }
+
+    public static void getPistaById(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM pista WHERE id = ?");
+        stmt.setInt(1, id);
+        stmt.execute();
+    }
+
+    @Override
+    public String toString() {
+        return "Pista: " + "ID: " + id + ", Nome: " + nome;
     }
 }
