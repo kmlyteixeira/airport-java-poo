@@ -1,7 +1,9 @@
 package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 import utils.Mascara;
 
 public class Pista {
@@ -42,9 +44,11 @@ public class Pista {
     }
 
     /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarPista(int id, String numero) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE pista SET numero = ? WHERE id = ?");
-        stmt.setString(1, numero);
+    public static void alterarPista(int id, String input, int tipoDado) throws Exception {
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getPistaById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE pista SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
@@ -55,10 +59,20 @@ public class Pista {
         stmt.execute();
     }
 
-    public static void getPistaById(int id) throws Exception {
+    public static Pista getPistaById(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM pista WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Pista pista = new Pista(
+                rs.getString("numero"));
+            return pista;
+        } else {
+            return null;
+        }
+
     }
 
     @Override

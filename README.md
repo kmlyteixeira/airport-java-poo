@@ -53,12 +53,12 @@ TODO LIST - Para não esquecer
 
 1 - Ajustar Metodos de Alteração - usar util methods 
   - Avião ---OK
-  - Helicoptero
-  - Jato
+  - Helicoptero --- OK
+  - Jato --- OK
   - Companhia ---OK
-  - Hangar
-  - Pista
-  - Voo
+  - Hangar --- OK
+  - Pista --- OK
+  - Voo --- OK
 2 - Ajustar ToString - buscar super para compor impressão
 3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo --- OK
 4 - Capacidade e Velocidade - UNSIGNED

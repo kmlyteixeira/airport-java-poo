@@ -1,7 +1,9 @@
 package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 
 public class Helicoptero extends Aeromodelo {
     private int capacidade;
@@ -41,15 +43,31 @@ public class Helicoptero extends Aeromodelo {
         stmt.execute();
     }
 
-    public static void getHelicopteroById(int id) throws Exception {
+    public static Helicoptero getHelicopteroById(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM helicoptero WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Helicoptero helicoptero = new Helicoptero(
+                rs.getInt("id"), 
+                rs.getString("modelo"), 
+                rs.getString("marca"), 
+                rs.getInt("capacidade"), 
+                rs.getString("cor"));
+            return helicoptero;
+        } else {
+            return null;
+        }
     }
     /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarHelicoptero(int id, String modelo) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE helicoptero SET modelo = ? WHERE id = ?");
-        stmt.setString(1, modelo);
+    public static void alterarHelicoptero(int id, String input, int tipoDado) throws Exception {
+
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHelicopteroById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE helicoptero SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }

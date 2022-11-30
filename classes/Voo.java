@@ -1,7 +1,9 @@
 package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 import utils.Mascara;
 
 public class Voo {
@@ -79,6 +81,52 @@ public class Voo {
         } else {
             throw new Exception("Aeromodelo não definido");
         }
+    }
+
+    public static Voo getVooById(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM voo WHERE id = ?");
+        stmt.setInt(1, id);
+        stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+
+            Aeromodelo aero = null;
+
+            if (rs.getInt("aviao_id") != 0) {
+                aero = Aviao.getAviaoById(rs.getInt("aviao_id"));
+            } else if (rs.getInt("helicoptero_id") != 0) {
+                aero = Helicoptero.getHelicopteroById(rs.getInt("helicoptero_id"));
+            } else if (rs.getInt("jato_id") != 0) {
+                aero = Jato.getJatoById(rs.getInt("jato_id"));
+            } 
+
+            Voo voo = new Voo(
+                rs.getInt("id"), 
+                rs.getString("numero"), 
+                rs.getString("observacao"), 
+                rs.getString("piloto"), 
+                rs.getString("copiloto"),
+                rs.getString("origem"),
+                rs.getString("destino"),
+                rs.getString("data"),
+                rs.getString("hora"),
+                aero,
+                Pista.getPistaById(rs.getInt("pista_id")));
+            return voo;
+        } else {
+            return null;
+        }
+    }
+
+    public static void AlterarVoo(int id, String input, int tipoDado) throws Exception {
+
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getVooById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE voo SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
+        stmt.setInt(2, id);
+        stmt.execute();
     }
 
     public int getId() {
