@@ -30,16 +30,16 @@ Este controle será constituído de uma aplicação com Listar, Incluir, Alterar
 * Voo
 
 ### Regras
-* Cada avião possui uma única companhia;
+* Cada avião possui uma única companhia; -- OK
 * Somente serão criados aviões para companhias já cadastradas;
 * Somente poderá existir um Avião por relação no Hangar, ou seja, caso seja atribuído um novo avião, deverá retornar mensagem de Erro;
 * As capacidades de Helicoptero e Avião não podem ser negativas, assim como a velocidade do Jato;
 * A numeração de cada Pista, o prefixo de cada Avião e o número de cada Voo são compostos de:
-  * Numeração Pista: 1 letra e 2 números
-  * Prefixo Avião: 3 letras e 4 números
-  * Numeração de Voo: 3 letras e 6 números
-* Os valores de data estão marcados como String, porém podem ser considerados como sql.Date, sendo que, caso utilizado como String, deverão seguir o formato YYYY-MM-DD. As horas terão o formato de HH:MM.
-* O destino e a origem de cada voo é sempre composto de três letras.
+  * Numeração Pista: 1 letra e 2 números --- OK
+  * Prefixo Avião: 3 letras e 4 números --- OK
+  * Numeração de Voo: 3 letras e 6 números --- OK
+* Os valores de data estão marcados como String, porém podem ser considerados como sql.Date, sendo que, caso utilizado como String, deverão seguir o formato YYYY-MM-DD. As horas terão o formato de HH:MM. --- OK
+* O destino e a origem de cada voo é sempre composto de três letras. --- OK
 * A listagem de todos os voos deverá ter uma opção de salvar em um arquivo de texto. O formato deste arquivo é livre.
 
 ## Entrega
@@ -51,8 +51,15 @@ Este controle será constituído de uma aplicação com Listar, Incluir, Alterar
 ----------------
 TODO LIST - Para não esquecer
 
-1 - Ajustar Metodos de Alteração - usar um tipo genérico e tratar no método
+1 - Ajustar Metodos de Alteração - usar util methods 
+  - Avião ---OK
+  - Helicoptero
+  - Jato
+  - Companhia ---OK
+  - Hangar
+  - Pista
+  - Voo
 2 - Ajustar ToString - buscar super para compor impressão
-3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo
+3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo --- OK
 4 - Capacidade e Velocidade - UNSIGNED
 5 - Comentários + revisão no código

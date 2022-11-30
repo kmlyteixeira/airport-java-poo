@@ -1,16 +1,22 @@
+package classes;
 import java.sql.PreparedStatement;
 
 import db.DAO;
+import utils.Mascara;
 
 public class Pista {
     private int id;
-    private String nome;
+    private String numero;
 
-    public Pista(String nome) throws Exception {
-        this.nome = nome;
+    public Pista(String numero) throws Exception {
+        this.numero = numero;
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO pista (nome) VALUES (?)");
-        stmt.setString(1, getNome());
+        if (!Mascara.isValida(numero, "[A-Z]{1}[0-9]{3}")) {
+            throw new Exception("Numero de pista inválido");
+        }
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO pista (numero) VALUES (?)");
+        stmt.setString(1, getNumero());
         stmt.execute();
     }
 
@@ -22,12 +28,12 @@ public class Pista {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNumero() {
+        return numero;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public static void imprimirPistas() throws Exception {
@@ -36,9 +42,9 @@ public class Pista {
     }
 
     /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarPista(int id, String nome) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE pista SET nome = ? WHERE id = ?");
-        stmt.setString(1, nome);
+    public static void alterarPista(int id, String numero) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE pista SET numero = ? WHERE id = ?");
+        stmt.setString(1, numero);
         stmt.setInt(2, id);
         stmt.execute();
     }
@@ -57,6 +63,6 @@ public class Pista {
 
     @Override
     public String toString() {
-        return "Pista: " + "ID: " + id + ", Nome: " + nome;
+        return "Pista: " + "ID: " + id + ", Numero: " + numero;
     }
 }

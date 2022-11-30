@@ -1,6 +1,8 @@
+package classes;
 import java.sql.PreparedStatement;
 
 import db.DAO;
+import utils.Mascara;
 
 public class Voo {
     private int id;
@@ -27,6 +29,26 @@ public class Voo {
         this.hora = hora;
         this.aeromodelo = aeromodelo;
         this.pista = pista;
+
+        if (!Mascara.isValida(numero, "[A-Z]{3}[0-9]{6}")) {
+            throw new Exception("Numero de voo inválido");
+        }
+
+        if (!Mascara.isValida(data, "[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+            throw new Exception("Data inválida");
+        }
+
+        if (!Mascara.isValida(hora, "[0-9]{2}:[0-9]{2}")) {
+            throw new Exception("Hora inválida");
+        }
+
+        if (!Mascara.isValida(origem, "[A-Z]{3}")) {
+            throw new Exception("Origem inválida");
+        }
+
+        if (!Mascara.isValida(destino, "[A-Z]{3}")) {
+            throw new Exception("Destino inválido");
+        }
 
         int[] definicaoAeromodelo = getAeromodelo(aeromodelo);
 
