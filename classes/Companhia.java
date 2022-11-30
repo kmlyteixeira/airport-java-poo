@@ -1,6 +1,9 @@
+package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 
 public class Companhia {
     private int id;
@@ -47,16 +50,31 @@ public class Companhia {
         stmt.execute();
     }
 
-    public static void getCompanhiaById(int id) throws Exception {
+    public static Companhia getCompanhiaById(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM companhia WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Companhia companhia = new Companhia(
+                rs.getInt("id"), 
+                rs.getString("nome"), 
+                rs.getString("cnpj"));
+            return companhia;
+        } else {
+            return null;
+        }
     }
-    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarCompanhia(int id, String nome) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET nome = ? WHERE id = ?");
-        stmt.setString(1, nome);
-        stmt.setInt(2, id);
+    
+    public static void alterarCompanhia(int id, String input, int tipoDado) throws Exception {
+
+        String[] dados = DefineTipoUpdate.getTipoDado(tipoDado, input, getCompanhiaById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET nome = ?, cnpj = ? WHERE id = ?");
+        stmt.setString(1, dados[0]);
+        stmt.setString(2, dados[1]);
+        stmt.setInt(3, id);
         stmt.execute();
     }
 

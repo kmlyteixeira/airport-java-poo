@@ -1,6 +1,10 @@
+package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
+import utils.Mascara;
 
 public class Aviao extends Aeromodelo {
     private String prefixo;
@@ -12,6 +16,10 @@ public class Aviao extends Aeromodelo {
         this.prefixo = prefixo;
         this.capacidade = capacidade;
         this.companhia = companhia;
+
+        if (!Mascara.isValida(prefixo, "[A-Z]{3}[0-9]{4}")) {
+            throw new Exception("Prefixo inválido");
+        }
 
         PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
         stmt.setString(1, getModelo());
@@ -51,16 +59,35 @@ public class Aviao extends Aeromodelo {
         stmt.execute();
     }
 
-    public static void getAviaoById(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM aviao WHERE id = ?");
+    public static Aviao getAviaoById(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT id FROM aviao WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Aviao aviao = new Aviao(
+                rs.getInt("id"), 
+                rs.getString("modelo"), 
+                rs.getString("marca"), 
+                rs.getString("prefixo"), 
+                rs.getInt("capacidade"), 
+                Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+            return aviao;
+        } else {
+            return null;
+        }
     }
-    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarAviao(int id, String modelo) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE aviao SET modelo = ? WHERE id = ?");
-        stmt.setString(1, modelo);
-        stmt.setInt(2, id);
+
+    public static void alterarAviao(int id, String input, int tipoDado) throws Exception {
+
+        String[] dados = DefineTipoUpdate.getTipoDado(tipoDado, input, getAviaoById(id));
+        
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE aviao SET modelo = ?, prefixo = ?, companhia_id = ? WHERE id = ?");
+        stmt.setString(1, dados[0]);
+        stmt.setString(2, dados[1]);
+        stmt.setString(3, dados[2]);
+        stmt.setInt(4, id);
         stmt.execute();
     }
 

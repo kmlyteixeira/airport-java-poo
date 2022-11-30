@@ -1,3 +1,4 @@
+package classes;
 public abstract class Aeromodelo {
     
     private int id;
