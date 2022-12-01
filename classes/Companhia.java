@@ -69,12 +69,11 @@ public class Companhia {
     
     public static void alterarCompanhia(int id, String input, int tipoDado) throws Exception {
 
-        String[] dados = DefineTipoUpdate.getTipoDado(tipoDado, input, getCompanhiaById(id));
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getCompanhiaById(id));
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET nome = ?, cnpj = ? WHERE id = ?");
-        stmt.setString(1, dados[0]);
-        stmt.setString(2, dados[1]);
-        stmt.setInt(3, id);
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
+        stmt.setInt(2, id);
         stmt.execute();
     }
 

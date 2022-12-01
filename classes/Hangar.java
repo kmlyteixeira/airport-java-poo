@@ -1,7 +1,9 @@
 package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 
 public class Hangar {
     
@@ -50,9 +52,11 @@ public class Hangar {
         stmt.execute();
     }
 
-    public static void alterarHangar(int id, String local) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
-        stmt.setString(1, local);
+    public static void alterarHangar(int id, String input, int tipoDado) throws Exception {
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHangarById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
@@ -63,10 +67,19 @@ public class Hangar {
         stmt.execute();
     }
 
-    public static void getHangarById(int id) throws Exception {
+    public static Hangar getHangarById(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Hangar hangar = new Hangar(
+                rs.getString("local"));
+            return hangar;
+        } else {
+            return null;
+        }
     }
 
     @Override

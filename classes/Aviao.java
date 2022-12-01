@@ -81,13 +81,11 @@ public class Aviao extends Aeromodelo {
 
     public static void alterarAviao(int id, String input, int tipoDado) throws Exception {
 
-        String[] dados = DefineTipoUpdate.getTipoDado(tipoDado, input, getAviaoById(id));
-        
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE aviao SET modelo = ?, prefixo = ?, companhia_id = ? WHERE id = ?");
-        stmt.setString(1, dados[0]);
-        stmt.setString(2, dados[1]);
-        stmt.setString(3, dados[2]);
-        stmt.setInt(4, id);
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getAviaoById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE aviao SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
+        stmt.setInt(2, id);
         stmt.execute();
     }
 

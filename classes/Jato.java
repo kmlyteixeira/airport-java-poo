@@ -1,7 +1,9 @@
 package classes;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import db.DAO;
+import utils.DefineTipoUpdate;
 
 public class Jato extends Aeromodelo {
     private String cor;
@@ -41,15 +43,31 @@ public class Jato extends Aeromodelo {
         stmt.execute();
     }
 
-    public static void getJatoById(int id) throws Exception {
+    public static Jato getJatoById(int id) throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM jato WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            Jato jato = new Jato(
+                rs.getInt("id"), 
+                rs.getString("marca"), 
+                rs.getString("modelo"), 
+                rs.getString("cor"), 
+                rs.getInt("velocidade"));
+            return jato;
+        } else {
+            return null;
+        }
     }
-    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarJato(int id, String modelo) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE jato SET modelo = ? WHERE id = ?");
-        stmt.setString(1, modelo);
+    
+    public static void alterarJato(int id, String input, int tipoDado) throws Exception {
+
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getJatoById(id));
+
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE jato SET "+campo+" = ? WHERE id = ?");
+        stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
