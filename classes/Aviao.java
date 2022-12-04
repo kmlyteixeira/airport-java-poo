@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 
 import db.DAO;
 import utils.DefineTipoUpdate;
-import utils.Mascara;
 
 public class Aviao extends Aeromodelo {
     private String prefixo;
@@ -17,17 +16,17 @@ public class Aviao extends Aeromodelo {
         this.capacidade = capacidade;
         this.companhia = companhia;
 
-        if (!Mascara.isValida(prefixo, "[A-Z]{3}[0-9]{4}")) {
-            throw new Exception("Prefixo inválido");
+        Aviao aviao = getAviaoById(id);
+        if (aviao == null) {
+            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
+            stmt.setString(1, getModelo());
+            stmt.setString(2, getMarca());
+            stmt.setString(3, getPrefixo());
+            stmt.setInt(4, getCapacidade());
+            stmt.setInt(5, getCompanhia().getId());
+            stmt.execute();
+            DAO.closeConnection();
         }
-
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
-        stmt.setString(1, getModelo());
-        stmt.setString(2, getMarca());
-        stmt.setString(3, getPrefixo());
-        stmt.setInt(4, getCapacidade());
-        stmt.setInt(5, getCompanhia().getId());
-        stmt.execute();
     }
 
     public String getPrefixo() {
@@ -57,6 +56,12 @@ public class Aviao extends Aeromodelo {
     public static void imprimirAvioes() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM aviao");
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        while (rs.next()) {
+            Aviao aviao = new Aviao(rs.getInt("id"), rs.getString("modelo"), rs.getString("marca"), rs.getString("prefixo"), rs.getInt("capacidade"), Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+            System.out.println(aviao);
+        }
     }
 
     public static Aviao getAviaoById(int id) throws Exception {
@@ -97,8 +102,10 @@ public class Aviao extends Aeromodelo {
 
     @Override
     public String toString() {
-        return "Aviao: ID: " + super.getId() + ", companhia:" + companhia + ", marca:" + super.getMarca()
-                + ", modelo:" + super.getModelo() + ", prefixo:" + prefixo + ", capacidade:" + capacidade;
+        return super.toString() + 
+        "\n | Prefixo: " + getPrefixo() + 
+        "\n | Capacidade: " + getCapacidade() + 
+        "\n | Companhia: " + getCompanhia().getNome();
     }
 
 }

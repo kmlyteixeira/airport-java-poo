@@ -59,7 +59,8 @@ TODO LIST - Para não esquecer
   - Hangar --- OK
   - Pista --- OK
   - Voo --- OK
-2 - Ajustar ToString - buscar super para compor impressão
+2 - Ajustar ToString - buscar super para compor impressão --- OK
 3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo --- OK
-4 - Capacidade e Velocidade - UNSIGNED
+4 - Capacidade e Velocidade - UNSIGNED --- OK
 5 - Comentários + revisão no código
+6 - Ajustar Erros Conexão

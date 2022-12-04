@@ -1,21 +1,25 @@
 package classes;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Scanner;
 
 import db.DAO;
-import utils.DefineTipoUpdate;
 
 public class Hangar {
     
     private int id;
     private String local;
 
-    public Hangar(String local) throws Exception {
+    public Hangar(int id, String local) throws Exception {
         this.local = local;
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO hangar (local) VALUES (?)");
-        stmt.setString(1, getLocal());
-        stmt.execute();
+        Hangar hangar = getHangarById(id);
+        if (hangar == null) {
+            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO hangar (local) VALUES (?)");
+            stmt.setString(1, getLocal());
+            stmt.execute();
+            DAO.closeConnection();
+        }
     }
 
     public int getId() {
@@ -34,9 +38,76 @@ public class Hangar {
         this.local = local;
     }
 
-    public static void imprimirHangares() throws Exception {
+    public static void ListarHangares() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar");
         stmt.execute();
+
+        System.out.println("====== HANGARES ======");
+        ResultSet rs = stmt.getResultSet();
+        while (rs.next()) {
+            Hangar hangar = new Hangar(rs.getInt("id"), rs.getString("local"));
+            System.out.println(hangar);
+        }
+    }
+
+    public static void AlterarHangar(Scanner sc) throws Exception {
+        System.out.println("====== ALTERAR HANGAR ======");
+        System.out.println("Digite o ID do hangar que deseja alterar:");
+        int id = sc.nextInt();
+        System.out.println("Qual informação deseja alterar?");
+        System.out.println(
+            "1 - Local" +
+            "\n2 - Adicionar aeronave" +
+            "\n3 - Remover aeronave");
+        int opcao = sc.nextInt();
+        switch (opcao) {
+            case 1:
+                System.out.println("Digite o novo local:");
+                String local = sc.next();
+                updateHangar(id, local);
+                break;
+            
+            case 2:
+                System.out.println("Digite o ID da aeronave que deseja adicionar:");
+                int idAviaoAdd = sc.nextInt();
+                Aviao aviaoAdd = Aviao.getAviaoById(idAviaoAdd);
+                if (aviaoAdd == null) {
+                    throw new Exception("Aeronave não encontrada!");
+                }
+                adicionarAviaoAoHangar(id, aviaoAdd);
+                System.out.println("Aeronave adicionada com sucesso!");
+                break;
+            
+            case 3:
+                System.out.println("Digite o ID da aeronave que deseja remover:");
+                int idAviaoRemover = sc.nextInt();
+                removerAviaoDoHangar(idAviaoRemover);
+                System.out.println("Aeronave removida com sucesso!");
+                break;
+            default:
+                System.out.println("Opção inválida!");
+                break;
+        }
+    }
+
+    public static void CadastrarHangar(Scanner sc) throws Exception {
+        System.out.println("====== CADASTRAR HANGAR ======");
+        System.out.println("Digite o local do hangar:");
+        String local = sc.next();
+        Hangar hangar = new Hangar(0, local);
+        System.out.println("Hangar "+hangar.getId()+" cadastrado com sucesso!");
+    }
+
+    public static void DeletarHangar(Scanner sc) throws Exception {
+        System.out.println("====== DELETAR HANGAR ======");
+        System.out.println("Digite o ID do hangar que deseja deletar:");
+        int id = sc.nextInt();
+        Hangar hangar = getHangarById(id);
+        if (hangar == null) {
+            throw new Exception("Hangar não encontrado!");
+        }
+        excluirHangar(id);
+        System.out.println("Hangar deletado com sucesso!");
     }
 
     public static void adicionarAviaoAoHangar(int idHangar, Aviao aviao) throws Exception {
@@ -52,10 +123,8 @@ public class Hangar {
         stmt.execute();
     }
 
-    public static void alterarHangar(int id, String input, int tipoDado) throws Exception {
-        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHangarById(id));
-
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET "+campo+" = ? WHERE id = ?");
+    public static void updateHangar(int id, String input) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
@@ -65,6 +134,8 @@ public class Hangar {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM hangar WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+
+        throw new Exception("Hangar não encontrado!");
     }
 
     public static Hangar getHangarById(int id) throws Exception {
@@ -75,6 +146,7 @@ public class Hangar {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Hangar hangar = new Hangar(
+                rs.getInt("id"),
                 rs.getString("local"));
             return hangar;
         } else {
@@ -84,6 +156,7 @@ public class Hangar {
 
     @Override
     public String toString() {
-        return "Hangar: " + "ID: " + id + ", Local: " + local;
+        return "\n | ID: " + getId() + 
+               "\n | Local: " + getLocal();
     }
 }

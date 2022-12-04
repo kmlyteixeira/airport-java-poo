@@ -14,12 +14,16 @@ public class Helicoptero extends Aeromodelo {
         this.capacidade = capacidade;
         this.cor = cor;
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO helicoptero (modelo, marca, capacidade, cor) VALUES (?, ?, ?, ?)");
-        stmt.setString(1, getModelo());
-        stmt.setString(2, getMarca());
-        stmt.setInt(3, getCapacidade());
-        stmt.setString(4, getCor());
-        stmt.execute();
+        Helicoptero helicoptero = getHelicopteroById(id);
+        if (helicoptero == null) {
+            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO helicoptero (modelo, marca, capacidade, cor) VALUES (?, ?, ?, ?)");
+            stmt.setString(1, getModelo());
+            stmt.setString(2, getMarca());
+            stmt.setInt(3, getCapacidade());
+            stmt.setString(4, getCor());
+            stmt.execute();
+            DAO.closeConnection();
+        }
     }
 
     public int getCapacidade() {
@@ -41,6 +45,12 @@ public class Helicoptero extends Aeromodelo {
     public static void imprimirHelicopteros() throws Exception {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM helicoptero");
         stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        while (rs.next()) {
+            Helicoptero helicoptero = new Helicoptero(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"), rs.getInt("capacidade"), rs.getString("cor"));
+            System.out.println(helicoptero);
+        }
     }
 
     public static Helicoptero getHelicopteroById(int id) throws Exception {
@@ -76,5 +86,12 @@ public class Helicoptero extends Aeromodelo {
         PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM helicoptero WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + 
+        "\n | Cor: " + getCor() + 
+        "\n | Capacidade: " + getCapacidade();
     }
 }
