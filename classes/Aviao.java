@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -10,7 +11,8 @@ public class Aviao extends Aeromodelo {
     private int capacidade;
     private Companhia companhia;
 
-    public Aviao(int id, String modelo, String marca, String prefixo, int capacidade, Companhia companhia) throws Exception {
+    public Aviao(int id, String modelo, String marca, String prefixo, int capacidade, Companhia companhia)
+            throws Exception {
         super(id, marca, modelo);
         this.prefixo = prefixo;
         this.capacidade = capacidade;
@@ -18,7 +20,8 @@ public class Aviao extends Aeromodelo {
 
         Aviao aviao = getAviaoById(id);
         if (aviao == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
+            PreparedStatement stmt = DAO.createConnection().prepareStatement(
+                    "INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
             stmt.setString(1, getModelo());
             stmt.setString(2, getMarca());
             stmt.setString(3, getPrefixo());
@@ -59,7 +62,9 @@ public class Aviao extends Aeromodelo {
 
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
-            Aviao aviao = new Aviao(rs.getInt("id"), rs.getString("modelo"), rs.getString("marca"), rs.getString("prefixo"), rs.getInt("capacidade"), Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+            Aviao aviao = new Aviao(rs.getInt("id"), rs.getString("modelo"), rs.getString("marca"),
+                    rs.getString("prefixo"), rs.getInt("capacidade"),
+                    Companhia.getCompanhiaById(rs.getInt("companhia_id")));
             System.out.println(aviao);
         }
     }
@@ -72,12 +77,12 @@ public class Aviao extends Aeromodelo {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Aviao aviao = new Aviao(
-                rs.getInt("id"), 
-                rs.getString("modelo"), 
-                rs.getString("marca"), 
-                rs.getString("prefixo"), 
-                rs.getInt("capacidade"), 
-                Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+                    rs.getInt("id"),
+                    rs.getString("modelo"),
+                    rs.getString("marca"),
+                    rs.getString("prefixo"),
+                    rs.getInt("capacidade"),
+                    Companhia.getCompanhiaById(rs.getInt("companhia_id")));
             return aviao;
         } else {
             return null;
@@ -88,7 +93,8 @@ public class Aviao extends Aeromodelo {
 
         String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getAviaoById(id));
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE aviao SET "+campo+" = ? WHERE id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("UPDATE aviao SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
@@ -102,10 +108,10 @@ public class Aviao extends Aeromodelo {
 
     @Override
     public String toString() {
-        return super.toString() + 
-        "\n | Prefixo: " + getPrefixo() + 
-        "\n | Capacidade: " + getCapacidade() + 
-        "\n | Companhia: " + getCompanhia().getNome();
+        return super.toString() +
+                "\n | Prefixo: " + getPrefixo() +
+                "\n | Capacidade: " + getCapacidade() +
+                "\n | Companhia: " + getCompanhia().getNome();
     }
 
 }

@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
@@ -48,7 +49,7 @@ public class Pista {
             isValido = Mascara.isValida(numero, "[A-Z]{1}[0-9]{3}");
             if (isValido == false) {
                 System.out.println("Numero invalido! Tente novamente com o padrão A000");
-            } 
+            }
         } while (isValido == false);
 
         new Pista(0, numero);
@@ -65,7 +66,7 @@ public class Pista {
             Pista pista = new Pista(rs.getInt("id"), rs.getString("numero"));
             System.out.println(pista);
         }
-    } 
+    }
 
     public static void AlterarPista(Scanner sc) throws Exception {
         System.out.println("====== ALTERAR PISTA ======");
@@ -116,8 +117,8 @@ public class Pista {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Pista pista = new Pista(
-                rs.getInt("id"),
-                rs.getString("numero"));
+                    rs.getInt("id"),
+                    rs.getString("numero"));
             return pista;
         } else {
             return null;
@@ -127,7 +128,7 @@ public class Pista {
 
     @Override
     public String toString() {
-        return "\n | ID: " + getId() + 
-               "\n | Numero: " + getNumero();
+        return "\n | ID: " + getId() +
+                "\n | Numero: " + getNumero();
     }
 }

@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -16,7 +17,8 @@ public class Helicoptero extends Aeromodelo {
 
         Helicoptero helicoptero = getHelicopteroById(id);
         if (helicoptero == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO helicoptero (modelo, marca, capacidade, cor) VALUES (?, ?, ?, ?)");
+            PreparedStatement stmt = DAO.createConnection()
+                    .prepareStatement("INSERT INTO helicoptero (modelo, marca, capacidade, cor) VALUES (?, ?, ?, ?)");
             stmt.setString(1, getModelo());
             stmt.setString(2, getMarca());
             stmt.setInt(3, getCapacidade());
@@ -48,7 +50,8 @@ public class Helicoptero extends Aeromodelo {
 
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
-            Helicoptero helicoptero = new Helicoptero(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"), rs.getInt("capacidade"), rs.getString("cor"));
+            Helicoptero helicoptero = new Helicoptero(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"),
+                    rs.getInt("capacidade"), rs.getString("cor"));
             System.out.println(helicoptero);
         }
     }
@@ -61,22 +64,24 @@ public class Helicoptero extends Aeromodelo {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Helicoptero helicoptero = new Helicoptero(
-                rs.getInt("id"), 
-                rs.getString("modelo"), 
-                rs.getString("marca"), 
-                rs.getInt("capacidade"), 
-                rs.getString("cor"));
+                    rs.getInt("id"),
+                    rs.getString("modelo"),
+                    rs.getString("marca"),
+                    rs.getInt("capacidade"),
+                    rs.getString("cor"));
             return helicoptero;
         } else {
             return null;
         }
     }
+
     /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
     public static void alterarHelicoptero(int id, String input, int tipoDado) throws Exception {
 
         String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHelicopteroById(id));
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE helicoptero SET "+campo+" = ? WHERE id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("UPDATE helicoptero SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
@@ -90,8 +95,8 @@ public class Helicoptero extends Aeromodelo {
 
     @Override
     public String toString() {
-        return super.toString() + 
-        "\n | Cor: " + getCor() + 
-        "\n | Capacidade: " + getCapacidade();
+        return super.toString() +
+                "\n | Cor: " + getCor() +
+                "\n | Capacidade: " + getCapacidade();
     }
 }

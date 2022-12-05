@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
@@ -18,7 +19,8 @@ public class Companhia {
 
         Companhia companhia = getCompanhiaById(id);
         if (companhia == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO companhia (nome, cnpj) VALUES (?, ?)");
+            PreparedStatement stmt = DAO.createConnection()
+                    .prepareStatement("INSERT INTO companhia (nome, cnpj) VALUES (?, ?)");
             stmt.setString(1, getNome());
             stmt.setString(2, getCnpj());
             stmt.execute();
@@ -70,7 +72,7 @@ public class Companhia {
         String cnpj = sc.next();
 
         Companhia companhia = new Companhia(0, nome, cnpj);
-        System.out.println("Companhia "+companhia.getNome()+" cadastrada com sucesso!");
+        System.out.println("Companhia " + companhia.getNome() + " cadastrada com sucesso!");
     }
 
     public static void AlterarCompanhia(Scanner sc) throws Exception {
@@ -84,7 +86,7 @@ public class Companhia {
 
         System.out.println("Qual informação deseja alterar?");
         System.out.println("1 - Nome" +
-                           "\n2 - CNPJ");
+                "\n2 - CNPJ");
         int opcaoCompanhia = sc.nextInt();
         System.out.println("Digite o novo valor: ");
         String novoValor = sc.next();
@@ -114,9 +116,9 @@ public class Companhia {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Companhia companhia = new Companhia(
-                rs.getInt("id"), 
-                rs.getString("nome"), 
-                rs.getString("cnpj"));
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("cnpj"));
             return companhia;
         } else {
             return null;
@@ -127,7 +129,8 @@ public class Companhia {
 
         String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getCompanhiaById(id));
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE companhia SET "+campo+" = ? WHERE id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("UPDATE companhia SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
@@ -144,7 +147,7 @@ public class Companhia {
     @Override
     public String toString() {
         return "\n | ID: " + getId() +
-               "\n | Nome: " + getNome() + 
-               "\n | CNPJ: " + getCnpj();
+                "\n | Nome: " + getNome() +
+                "\n | CNPJ: " + getCnpj();
     }
 }

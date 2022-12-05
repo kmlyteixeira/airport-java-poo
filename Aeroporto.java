@@ -4,6 +4,7 @@ import classes.Aeromodelo;
 import classes.Companhia;
 import classes.Hangar;
 import classes.Pista;
+import classes.Voo;
 
 public class Aeroporto {
     public static void main(String[] args) throws Exception {
@@ -38,7 +39,7 @@ public class Aeroporto {
             System.out.println(" ============================================== ");
             System.out.println(" \n\nDigite a opção desejada: ");
             opcao = sc.nextInt();
-    
+
             switch (opcao) {
                 case 1:
                     Aeromodelo.CadastrarAeromodelo(sc);
@@ -50,7 +51,7 @@ public class Aeroporto {
                     Hangar.CadastrarHangar(sc);
                     break;
                 case 4:
-                    // Voo.CadastrarVoo(sc);
+                    Voo.CadastrarVoo(sc);
                     break;
                 case 5:
                     Aeromodelo.DeletarAeromodelo(sc);
@@ -62,7 +63,7 @@ public class Aeroporto {
                     Hangar.DeletarHangar(sc);
                     break;
                 case 8:
-                    // Voo.DeletarVoo(sc);
+                    Voo.DeletarVoo(sc);
                     break;
                 case 9:
                     Aeromodelo.AlterarAeromodelo(sc);
@@ -74,7 +75,7 @@ public class Aeroporto {
                     Hangar.AlterarHangar(sc);
                     break;
                 case 12:
-                    // Voo.AlterarVoo(sc);
+                    Voo.AlterarVoo(sc);
                     break;
                 case 13:
                     Aeromodelo.ListarAeromodelos();
@@ -86,7 +87,7 @@ public class Aeroporto {
                     Hangar.ListarHangares();
                     break;
                 case 16:
-                    // Voo.ListarVoos();
+                    Voo.ListarVoo();
                     break;
                 case 17:
                     Pista.ListarPistas();
@@ -104,7 +105,7 @@ public class Aeroporto {
                 case 21:
                     System.out.println("Saindo...");
                     break;
-    
+
                 default:
                     System.out.println("Opção inválida!");
                     break;

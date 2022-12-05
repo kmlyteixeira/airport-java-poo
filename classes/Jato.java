@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -16,7 +17,8 @@ public class Jato extends Aeromodelo {
 
         Jato jato = getJatoById(id);
         if (jato == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO jato (modelo, marca, cor, velocidade) VALUES (?, ?, ?, ?)");
+            PreparedStatement stmt = DAO.createConnection()
+                    .prepareStatement("INSERT INTO jato (modelo, marca, cor, velocidade) VALUES (?, ?, ?, ?)");
             stmt.setString(1, getModelo());
             stmt.setString(2, getMarca());
             stmt.setString(3, getCor());
@@ -48,7 +50,8 @@ public class Jato extends Aeromodelo {
 
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
-            Jato jato = new Jato(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"), rs.getString("cor"), rs.getInt("velocidade"));
+            Jato jato = new Jato(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"), rs.getString("cor"),
+                    rs.getInt("velocidade"));
             System.out.println(jato);
         }
     }
@@ -61,22 +64,23 @@ public class Jato extends Aeromodelo {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Jato jato = new Jato(
-                rs.getInt("id"), 
-                rs.getString("marca"), 
-                rs.getString("modelo"), 
-                rs.getString("cor"), 
-                rs.getInt("velocidade"));
+                    rs.getInt("id"),
+                    rs.getString("marca"),
+                    rs.getString("modelo"),
+                    rs.getString("cor"),
+                    rs.getInt("velocidade"));
             return jato;
         } else {
             return null;
         }
     }
-    
+
     public static void alterarJato(int id, String input, int tipoDado) throws Exception {
 
         String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getJatoById(id));
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE jato SET "+campo+" = ? WHERE id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("UPDATE jato SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
@@ -90,8 +94,8 @@ public class Jato extends Aeromodelo {
 
     @Override
     public String toString() {
-        return super.toString() + 
-        "\n | Cor: " + getCor() + 
-        "\n | Velocidade: " + getVelocidade();
+        return super.toString() +
+                "\n | Cor: " + getCor() +
+                "\n | Velocidade: " + getVelocidade();
     }
 }

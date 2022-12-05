@@ -1,6 +1,7 @@
 package classes;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Scanner;
 
 import db.DAO;
 import utils.DefineTipoUpdate;
@@ -32,43 +33,25 @@ public class Voo {
         this.aeromodelo = aeromodelo;
         this.pista = pista;
 
-        if (!Mascara.isValida(numero, "[A-Z]{3}[0-9]{6}")) {
-            throw new Exception("Numero de voo inválido");
-        }
-
-        if (!Mascara.isValida(data, "[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
-            throw new Exception("Data inválida");
-        }
-
-        if (!Mascara.isValida(hora, "[0-9]{2}:[0-9]{2}")) {
-            throw new Exception("Hora inválida");
-        }
-
-        if (!Mascara.isValida(origem, "[A-Z]{3}")) {
-            throw new Exception("Origem inválida");
-        }
-
-        if (!Mascara.isValida(destino, "[A-Z]{3}")) {
-            throw new Exception("Destino inválido");
-        }
-
         int[] definicaoAeromodelo = getAeromodelo(aeromodelo);
 
-        PreparedStatement stmt = DAO.createConnection().prepareStatement(
-            "INSERT INTO voo (numero, observacao, piloto, copiloto, origem, destino, data, hora, pista_id, aviao_id, helicoptero_id, jato_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        stmt.setString(1, getNumero());
-        stmt.setString(2, getObservacao());
-        stmt.setString(3, getPiloto());
-        stmt.setString(4, getCopiloto());
-        stmt.setString(5, getOrigem());
-        stmt.setString(6, getDestino());
-        stmt.setString(7, getData());
-        stmt.setString(8, getHora());
-        stmt.setInt(9, getPista().getId());
-        stmt.setInt(10, definicaoAeromodelo[0]);
-        stmt.setInt(11, definicaoAeromodelo[1]);
-        stmt.setInt(12, definicaoAeromodelo[2]);
-        stmt.execute();
+        if (id == 0) {
+            PreparedStatement stmt = DAO.createConnection().prepareStatement(
+                "INSERT INTO voo (numero, observacao, piloto, copiloto, origem, destino, data, hora, pista_id, aviao_id, helicoptero_id, jato_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            stmt.setString(1, getNumero());
+            stmt.setString(2, getObservacao());
+            stmt.setString(3, getPiloto());
+            stmt.setString(4, getCopiloto());
+            stmt.setString(5, getOrigem());
+            stmt.setString(6, getDestino());
+            stmt.setString(7, getData());
+            stmt.setString(8, getHora());
+            stmt.setInt(9, getPista().getId());
+            stmt.setInt(10, definicaoAeromodelo[0]);
+            stmt.setInt(11, definicaoAeromodelo[1]);
+            stmt.setInt(12, definicaoAeromodelo[2]);
+            stmt.execute();
+        }
     }
 
     public static <T> int[] getAeromodelo(T aeromodelo) throws Exception {
@@ -80,6 +63,188 @@ public class Voo {
             return new int[] { 0, 0, ((Jato) aeromodelo).getId() };
         } else {
             throw new Exception("Aeromodelo não definido");
+        }
+    }
+
+    public static void CadastrarVoo(Scanner sc) throws Exception {
+        String numero, origem, destino, data, hora;
+
+        System.out.println("====== CADASTRAR VOO ======");
+        do {
+            System.out.println("Digite o numero do voo: ");
+            numero = sc.nextLine();
+            if (Mascara.isValida(numero, "[A-Z]{3}[0-9]{6}") == false) {
+                System.out.println("Numero de voo inválido. Tente novamente com o padrão XXX000000");
+            }
+        } while (Mascara.isValida(numero, "[A-Z]{3}[0-9]{6}") == false);
+
+        System.out.println("Digite a observação do voo: ");
+        String observacao = sc.nextLine();
+        System.out.println("Digite o nome do piloto: ");
+        String piloto = sc.nextLine();
+        System.out.println("Digite o nome do copiloto: ");
+        String copiloto = sc.nextLine();
+        do {
+            System.out.println("Digite a origem do voo: ");
+            origem = sc.nextLine();
+            if (Mascara.isValida(origem, "[A-Z]{3}") == false) {
+                System.out.println("Origem inválida. Tente novamente com o padrão XXX");
+            }
+        } while (Mascara.isValida(origem, "[A-Z]{3}") == false);
+        do {
+            System.out.println("Digite o destino do voo: ");
+            destino = sc.nextLine();
+            if (Mascara.isValida(destino, "[A-Z]{3}") == false) {
+                System.out.println("Destino inválido. Tente novamente com o padrão XXX");
+            }
+        } while (Mascara.isValida(destino, "[A-Z]{3}") == false);
+        do {
+            System.out.println("Digite a data do voo: ");
+            data = sc.nextLine();
+            if (Mascara.isValida(data, "[0-9]{4}-[0-9]{2}-[0-9]{2}") == false) {
+                System.out.println("Data inválida. Tente novamente com o padrão YYYY-MM-DD");
+            }
+        } while (Mascara.isValida(destino, "[0-9]{4}-[0-9]{2}-[0-9]{2}") == false);
+        do {
+            System.out.println("Digite a hora do voo: ");
+            hora = sc.nextLine();
+            if (Mascara.isValida(hora, "[0-9]{2}:[0-9]{2}") == false) {
+                System.out.println("Hora inválida. Tente novamente com o padrão HH:MM");
+            }
+        } while (Mascara.isValida(hora, "[0-9]{2}:[0-9]{2}") == false);
+        System.out.println("Digite o id da pista: ");
+        int pistaId = sc.nextInt();
+        Pista pista = Pista.getPistaById(pistaId);
+        System.out.println("Qual o tipo de aeronave do voo?");
+        System.out.println(
+            "\n1 - Avião" +
+            "\n2 - Helicóptero" +
+            "\n3 - Jato");
+        int tipoAeronave = sc.nextInt();
+        switch (tipoAeronave) {
+            case 1:
+                System.out.println("Digite o id do avião: ");
+                Aviao aviao = Aviao.getAviaoById(sc.nextInt());
+                new Voo(0,numero, observacao, piloto, copiloto, origem, destino, data, hora, aviao, pista);
+                break;
+            case 2:
+                System.out.println("Digite o id do helicóptero: ");
+                Helicoptero helicoptero = Helicoptero.getHelicopteroById(sc.nextInt());
+                new Voo(0,numero, observacao, piloto, copiloto, origem, destino, data, hora, helicoptero, pista);
+                break;
+            case 3:
+                System.out.println("Digite o id do jato: ");
+                Jato jato = Jato.getJatoById(sc.nextInt());
+                new Voo(0,numero, observacao, piloto, copiloto, origem, destino, data, hora, jato, pista);
+                break;
+        
+            default:
+                System.out.println("Opção inválida");
+                break;
+        }   
+
+        System.out.println("Voo cadastrado com sucesso!");
+    }
+
+    public static void AlterarVoo(Scanner sc) throws Exception {
+        System.out.println("====== ALTERAR VOO ======");
+        System.out.println("Digite o id do voo: ");
+        int id = sc.nextInt();
+        Voo voo = Voo.getVooById(id);
+        if (voo == null) {
+            throw new Exception("Voo não encontrado");
+        } 
+        System.out.println("Qual informação deseja alterar?");
+        System.out.println(
+            "1 - Numero" +
+            "\n2 - Observação" + 
+            "\n3 - Piloto" +
+            "\n4 - Copiloto" +
+            "\n5 - Origem" +
+            "\n6 - Destino" +
+            "\n7 - Data" +
+            "\n8 - Hora" +
+            "\n9 - Pista" +
+            "\n10 - Avião" );
+        int opcao = sc.nextInt();
+        System.out.println("Digite o novo valor: ");
+        String novoValor = sc.nextLine();
+
+        updateVoo(id, novoValor, opcao);
+        System.out.println("Voo alterado com sucesso!");
+    }
+
+    public static void DeletarVoo(Scanner sc) throws Exception {
+        System.out.println("====== DELETAR VOO ======");
+        System.out.println("Digite o id do voo: ");
+        int id = sc.nextInt();
+        Voo voo = Voo.getVooById(id);
+        if (voo == null) {
+            throw new Exception("Voo não encontrado");
+        } 
+        deleteVoo(id);
+        System.out.println("Voo deletado com sucesso!");
+    }
+
+    public static void ListarVoo() throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM voo");
+        stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        while (rs.next()) {
+            int idAviao = rs.getInt("aviao_id");
+            int idJato = rs.getInt("jato_id");
+            int idHelicoptero = rs.getInt("helicoptero_id");
+
+            if (idAviao != 0) {
+                Aviao aviao = Aviao.getAviaoById(idAviao);
+                Voo voo = new Voo(
+                    rs.getInt("id"),
+                    rs.getString("numero"),
+                    rs.getString("observacao"),
+                    rs.getString("piloto"),
+                    rs.getString("copiloto"),
+                    rs.getString("origem"),
+                    rs.getString("destino"),
+                    rs.getString("data"),
+                    rs.getString("hora"),
+                    aviao,
+                    Pista.getPistaById(rs.getInt("pista_id"))
+                );
+                System.out.println(voo);
+            } else if (idJato != 0) {
+                Jato jato = Jato.getJatoById(idJato);
+                Voo voo = new Voo(
+                    rs.getInt("id"),
+                    rs.getString("numero"),
+                    rs.getString("observacao"),
+                    rs.getString("piloto"),
+                    rs.getString("copiloto"),
+                    rs.getString("origem"),
+                    rs.getString("destino"),
+                    rs.getString("data"),
+                    rs.getString("hora"),
+                    jato,
+                    Pista.getPistaById(rs.getInt("pista_id"))
+                );
+                System.out.println(voo);
+            } else if (idHelicoptero != 0) {
+                Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero);
+                Voo voo = new Voo(
+                    rs.getInt("id"),
+                    rs.getString("numero"),
+                    rs.getString("observacao"),
+                    rs.getString("piloto"),
+                    rs.getString("copiloto"),
+                    rs.getString("origem"),
+                    rs.getString("destino"),
+                    rs.getString("data"),
+                    rs.getString("hora"),
+                    helicoptero,
+                    Pista.getPistaById(rs.getInt("pista_id"))
+                );
+                System.out.println(voo);
+            }
         }
     }
 
@@ -119,13 +284,19 @@ public class Voo {
         }
     }
 
-    public static void AlterarVoo(int id, String input, int tipoDado) throws Exception {
+    public static void updateVoo(int id, String input, int tipoDado) throws Exception {
 
         String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getVooById(id));
 
         PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE voo SET "+campo+" = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
+        stmt.execute();
+    }
+
+    public static void deleteVoo(int id) throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM voo WHERE id = ?");
+        stmt.setInt(1, id);
         stmt.execute();
     }
 
@@ -211,9 +382,17 @@ public class Voo {
 
     @Override
     public String toString() {
-        return "Voo: id:" + id + ", numero:" + numero + ", observacao:" + observacao + ", piloto:" + piloto + ", copiloto:"
-                + copiloto + ", origem:" + origem + ", destino:" + destino + ", data:" + data + ", hora:" + hora
-                + ", aeromodelo:" + aeromodelo + ", pista:" + pista;
+        return "\n | ID: " + id + 
+                "\n | Numero: " + numero + 
+                "\n | Observação: " + observacao + 
+                "\n | Piloto: " + piloto + 
+                "\n | Copiloto: " + copiloto + 
+                "\n | Origem: " + origem + 
+                "\n | Destino: " + destino + 
+                "\n | Data: " + data + 
+                "\n | Hora: " + hora + 
+                "\n | Pista: " + pista.getNumero() + 
+                "\n | Aeromodelo: " + aeromodelo.getId();
     }
 
 }

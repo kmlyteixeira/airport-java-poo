@@ -1,4 +1,5 @@
 package classes;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
@@ -6,7 +7,7 @@ import java.util.Scanner;
 import db.DAO;
 
 public class Hangar {
-    
+
     private int id;
     private String local;
 
@@ -56,9 +57,9 @@ public class Hangar {
         int id = sc.nextInt();
         System.out.println("Qual informação deseja alterar?");
         System.out.println(
-            "1 - Local" +
-            "\n2 - Adicionar aeronave" +
-            "\n3 - Remover aeronave");
+                "1 - Local" +
+                        "\n2 - Adicionar aeronave" +
+                        "\n3 - Remover aeronave");
         int opcao = sc.nextInt();
         switch (opcao) {
             case 1:
@@ -66,7 +67,7 @@ public class Hangar {
                 String local = sc.next();
                 updateHangar(id, local);
                 break;
-            
+
             case 2:
                 System.out.println("Digite o ID da aeronave que deseja adicionar:");
                 int idAviaoAdd = sc.nextInt();
@@ -77,7 +78,7 @@ public class Hangar {
                 adicionarAviaoAoHangar(id, aviaoAdd);
                 System.out.println("Aeronave adicionada com sucesso!");
                 break;
-            
+
             case 3:
                 System.out.println("Digite o ID da aeronave que deseja remover:");
                 int idAviaoRemover = sc.nextInt();
@@ -95,7 +96,7 @@ public class Hangar {
         System.out.println("Digite o local do hangar:");
         String local = sc.next();
         Hangar hangar = new Hangar(0, local);
-        System.out.println("Hangar "+hangar.getId()+" cadastrado com sucesso!");
+        System.out.println("Hangar " + hangar.getId() + " cadastrado com sucesso!");
     }
 
     public static void DeletarHangar(Scanner sc) throws Exception {
@@ -118,7 +119,8 @@ public class Hangar {
     }
 
     public static void removerAviaoDoHangar(int idHangar) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET aviao_id = NULL WHERE id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("UPDATE hangar SET aviao_id = NULL WHERE id = ?");
         stmt.setInt(1, idHangar);
         stmt.execute();
     }
@@ -146,8 +148,8 @@ public class Hangar {
         ResultSet rs = stmt.getResultSet();
         if (rs.next()) {
             Hangar hangar = new Hangar(
-                rs.getInt("id"),
-                rs.getString("local"));
+                    rs.getInt("id"),
+                    rs.getString("local"));
             return hangar;
         } else {
             return null;
@@ -156,7 +158,7 @@ public class Hangar {
 
     @Override
     public String toString() {
-        return "\n | ID: " + getId() + 
-               "\n | Local: " + getLocal();
+        return "\n | ID: " + getId() +
+                "\n | Local: " + getLocal();
     }
 }
