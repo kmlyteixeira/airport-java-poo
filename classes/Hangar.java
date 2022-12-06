@@ -1,5 +1,6 @@
 package classes;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
@@ -11,15 +12,14 @@ public class Hangar {
     private int id;
     private String local;
 
-    public Hangar(int id, String local) throws Exception {
+    public Hangar(int id, String local, Connection conn) throws Exception {
+        this.id = id;
         this.local = local;
 
-        Hangar hangar = getHangarById(id);
-        if (hangar == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement("INSERT INTO hangar (local) VALUES (?)");
+        if (id == 0) {
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO hangar (local) VALUES (?)");
             stmt.setString(1, getLocal());
             stmt.execute();
-            DAO.closeConnection();
         }
     }
 
@@ -39,19 +39,32 @@ public class Hangar {
         this.local = local;
     }
 
-    public static void ListarHangares() throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar");
+    public boolean isOcupado() throws Exception {
+        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar WHERE aviao_id is null and id = ?");
+        stmt.setInt(1, getId());
+        stmt.execute();
+
+        ResultSet rs = stmt.getResultSet();
+        if (rs.next()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static void ListarHangares(Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM hangar");
         stmt.execute();
 
         System.out.println("====== HANGARES ======");
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
-            Hangar hangar = new Hangar(rs.getInt("id"), rs.getString("local"));
+            Hangar hangar = new Hangar(rs.getInt("id"), rs.getString("local"), conn);
             System.out.println(hangar);
         }
     }
 
-    public static void AlterarHangar(Scanner sc) throws Exception {
+    public static void AlterarHangar(Scanner sc, Connection conn) throws Exception {
         System.out.println("====== ALTERAR HANGAR ======");
         System.out.println("Digite o ID do hangar que deseja alterar:");
         int id = sc.nextInt();
@@ -59,30 +72,28 @@ public class Hangar {
         System.out.println(
                 "1 - Local" +
                         "\n2 - Adicionar aeronave" +
-                        "\n3 - Remover aeronave");
+                        "\n3 - Desocupar hangar");
         int opcao = sc.nextInt();
         switch (opcao) {
             case 1:
                 System.out.println("Digite o novo local:");
                 String local = sc.next();
-                updateHangar(id, local);
+                updateHangar(id, local, conn);
                 break;
 
             case 2:
                 System.out.println("Digite o ID da aeronave que deseja adicionar:");
                 int idAviaoAdd = sc.nextInt();
-                Aviao aviaoAdd = Aviao.getAviaoById(idAviaoAdd);
+                Aviao aviaoAdd = Aviao.getAviaoById(idAviaoAdd, conn);
                 if (aviaoAdd == null) {
                     throw new Exception("Aeronave não encontrada!");
                 }
-                adicionarAviaoAoHangar(id, aviaoAdd);
+                adicionarAviaoAoHangar(id, aviaoAdd, conn);
                 System.out.println("Aeronave adicionada com sucesso!");
                 break;
 
             case 3:
-                System.out.println("Digite o ID da aeronave que deseja remover:");
-                int idAviaoRemover = sc.nextInt();
-                removerAviaoDoHangar(idAviaoRemover);
+                removerAviaoDoHangar(id, conn);
                 System.out.println("Aeronave removida com sucesso!");
                 break;
             default:
@@ -91,57 +102,57 @@ public class Hangar {
         }
     }
 
-    public static void CadastrarHangar(Scanner sc) throws Exception {
+    public static void CadastrarHangar(Scanner sc, Connection conn) throws Exception {
         System.out.println("====== CADASTRAR HANGAR ======");
         System.out.println("Digite o local do hangar:");
         String local = sc.next();
-        Hangar hangar = new Hangar(0, local);
-        System.out.println("Hangar " + hangar.getId() + " cadastrado com sucesso!");
+        new Hangar(0, local, conn);
+        System.out.println("Hangar cadastrado com sucesso!");
     }
 
-    public static void DeletarHangar(Scanner sc) throws Exception {
+    public static void DeletarHangar(Scanner sc, Connection conn) throws Exception {
         System.out.println("====== DELETAR HANGAR ======");
         System.out.println("Digite o ID do hangar que deseja deletar:");
         int id = sc.nextInt();
-        Hangar hangar = getHangarById(id);
+        Hangar hangar = getHangarById(id, conn);
         if (hangar == null) {
             throw new Exception("Hangar não encontrado!");
         }
-        excluirHangar(id);
+        excluirHangar(id, conn);
         System.out.println("Hangar deletado com sucesso!");
     }
 
-    public static void adicionarAviaoAoHangar(int idHangar, Aviao aviao) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET aviao_id = ? WHERE id = ?");
+    public static void adicionarAviaoAoHangar(int idHangar, Aviao aviao, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("UPDATE hangar SET aviao_id = ? WHERE id = ?");
         stmt.setInt(1, aviao.getId());
         stmt.setInt(2, idHangar);
         stmt.execute();
     }
 
-    public static void removerAviaoDoHangar(int idHangar) throws Exception {
-        PreparedStatement stmt = DAO.createConnection()
+    public static void removerAviaoDoHangar(int idHangar, Connection conn) throws Exception {
+        PreparedStatement stmt = conn
                 .prepareStatement("UPDATE hangar SET aviao_id = NULL WHERE id = ?");
         stmt.setInt(1, idHangar);
         stmt.execute();
     }
 
-    public static void updateHangar(int id, String input) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
+    public static void updateHangar(int id, String input, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void excluirHangar(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM hangar WHERE id = ?");
+    public static void excluirHangar(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM hangar WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
 
         throw new Exception("Hangar não encontrado!");
     }
 
-    public static Hangar getHangarById(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar WHERE id = ?");
+    public static Hangar getHangarById(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM hangar WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
 
@@ -149,7 +160,8 @@ public class Hangar {
         if (rs.next()) {
             Hangar hangar = new Hangar(
                     rs.getInt("id"),
-                    rs.getString("local"));
+                    rs.getString("local"),
+                    conn);
             return hangar;
         } else {
             return null;
@@ -158,7 +170,15 @@ public class Hangar {
 
     @Override
     public String toString() {
+        boolean status = false;
+        try {
+            status = isOcupado();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return "\n | ID: " + getId() +
-                "\n | Local: " + getLocal();
+                "\n | Local: " + getLocal() +
+                "\n | Status: " + (status == true ? "Ocupado" : "Livre");
     }
 }
