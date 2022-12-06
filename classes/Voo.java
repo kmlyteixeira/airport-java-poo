@@ -1,4 +1,5 @@
 package classes;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -188,7 +189,19 @@ public class Voo {
         System.out.println("Voo deletado com sucesso!");
     }
 
-    public static void ListarVoo(Connection conn) throws Exception {
+    public static void ListarVoo(Scanner sc, Connection conn) throws Exception {
+
+        System.out.println("====== LISTAR VOOS ======");
+        System.out.println("Deseja exportar o resultado desta listagem para um arquivo txt? (S/N)");
+        char opcao = 0;
+        do {
+            opcao = sc.next().charAt(0);
+            if (opcao != 'S' && opcao != 'N') {
+                System.out.println("Opção inválida. Tente novamente. (S/N)");
+                opcao = 0;
+            }
+        } while (opcao == 0);
+
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM voo");
         stmt.execute();
 
@@ -215,6 +228,17 @@ public class Voo {
                     conn
                 );
                 System.out.println(voo);
+
+                try {
+                    if (opcao == 'S') {
+                        PrintWriter criaArquivo = new PrintWriter("RegistroVoos.txt");
+                        criaArquivo.println(voo);
+                        criaArquivo.close();
+                    }
+                } catch (Exception e) {
+                    System.out.println("\n Erro ao exportar para txt!" + e.getMessage());
+                }
+
             } else if (idJato != 0) {
                 Jato jato = Jato.getJatoById(idJato, conn);
                 Voo voo = new Voo(
@@ -232,6 +256,17 @@ public class Voo {
                     conn
                 );
                 System.out.println(voo);
+
+                try {
+                    if (opcao == 'S') {
+                        PrintWriter criaArquivo = new PrintWriter("RegistroVoos.txt");
+                        criaArquivo.println(voo);
+                        criaArquivo.close();
+                    }
+                } catch (Exception e) {
+                    System.out.println("\n Erro ao exportar para txt!" + e.getMessage());
+                }
+
             } else if (idHelicoptero != 0) {
                 Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero, conn);
                 Voo voo = new Voo(
@@ -249,6 +284,17 @@ public class Voo {
                     conn
                 );
                 System.out.println(voo);
+
+                try {
+                    if (opcao == 'S') {
+                        PrintWriter criaArquivo = new PrintWriter("RegistroVoos.txt");
+                        criaArquivo.println(voo);
+                        criaArquivo.close();
+                    }
+                } catch (Exception e) {
+                    System.out.println("\n Erro ao exportar para txt!" + e.getMessage());
+                }
+
             }
         }
     }
@@ -390,7 +436,7 @@ public class Voo {
     public String toString() {
         return "\n | ID: " + id + 
                 "\n | Numero: " + numero + 
-                "\n | Observação: " + observacao + 
+                "\n | Observacao: " + observacao + 
                 "\n | Piloto: " + piloto + 
                 "\n | Copiloto: " + copiloto + 
                 "\n | Origem: " + origem + 

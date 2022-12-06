@@ -91,7 +91,7 @@ public class Aeroporto {
                     Hangar.ListarHangares(connection);
                     break;
                 case 16:
-                    Voo.ListarVoo(connection);
+                    Voo.ListarVoo(sc, connection);
                     break;
                 case 17:
                     Pista.ListarPistas(connection);

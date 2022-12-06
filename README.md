@@ -64,5 +64,5 @@ TODO LIST - Para não esquecer
 4 - Capacidade e Velocidade - UNSIGNED --- OK
 ****** 5 - Comentários + revisão no código
 6 - Ajustar Erros Conexão --- OK
-****** 7 - Exportar Voos cadastrados para txt
-****** 8 - Mensagem de Erro se Hangar estiver ocupado
+****** 7 - Exportar Voos cadastrados para txt --- OK (Ajustar para não sobrepor)
+8 - Mensagem de Erro se Hangar estiver ocupado --- OK

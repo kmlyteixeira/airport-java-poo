@@ -82,6 +82,9 @@ public class Hangar {
                 break;
 
             case 2:
+                if (Hangar.getHangarById(id, conn).isOcupado()) {
+                    throw new Exception("Hangar já está ocupado! Remova a aeronave do Hangar antes de adicionar outra!");
+                }
                 System.out.println("Digite o ID da aeronave que deseja adicionar:");
                 int idAviaoAdd = sc.nextInt();
                 Aviao aviaoAdd = Aviao.getAviaoById(idAviaoAdd, conn);

@@ -1,0 +1,12 @@
+
+ | ID: 1
+ | Numero: AZU986535
+ | Observacao: Bagagens-excedentes-serao-despachadas
+ | Piloto: Joaquim
+ | Copiloto: Serafim
+ | Origem: GRU
+ | Destino: JOI
+ | Data: 2022-12-07
+ | Hora: 16:20
+ | Pista: A101
+ | Aeromodelo: 1
