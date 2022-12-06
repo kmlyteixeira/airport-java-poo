@@ -31,9 +31,9 @@ Este controle será constituído de uma aplicação com Listar, Incluir, Alterar
 
 ### Regras
 * Cada avião possui uma única companhia; -- OK
-* Somente serão criados aviões para companhias já cadastradas;
+* Somente serão criados aviões para companhias já cadastradas; -- OK
 * Somente poderá existir um Avião por relação no Hangar, ou seja, caso seja atribuído um novo avião, deverá retornar mensagem de Erro;
-* As capacidades de Helicoptero e Avião não podem ser negativas, assim como a velocidade do Jato;
+* As capacidades de Helicoptero e Avião não podem ser negativas, assim como a velocidade do Jato; --- OK
 * A numeração de cada Pista, o prefixo de cada Avião e o número de cada Voo são compostos de:
   * Numeração Pista: 1 letra e 2 números --- OK
   * Prefixo Avião: 3 letras e 4 números --- OK
@@ -62,5 +62,7 @@ TODO LIST - Para não esquecer
 2 - Ajustar ToString - buscar super para compor impressão --- OK
 3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo --- OK
 4 - Capacidade e Velocidade - UNSIGNED --- OK
-5 - Comentários + revisão no código
-6 - Ajustar Erros Conexão
+****** 5 - Comentários + revisão no código
+6 - Ajustar Erros Conexão --- OK
+****** 7 - Exportar Voos cadastrados para txt
+****** 8 - Mensagem de Erro se Hangar estiver ocupado

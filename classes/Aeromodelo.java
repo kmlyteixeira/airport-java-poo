@@ -1,5 +1,6 @@
 package classes;
 
+import java.sql.Connection;
 import java.util.Scanner;
 
 import utils.Mascara;
@@ -40,7 +41,7 @@ public abstract class Aeromodelo {
         this.modelo = modelo;
     }
 
-    public static void CadastrarAeromodelo(Scanner sc) throws Exception {
+    public static void CadastrarAeromodelo(Scanner sc, Connection conn) throws Exception {
         String marca, modelo, cor;
         int capacidade;
 
@@ -62,9 +63,9 @@ public abstract class Aeromodelo {
                 do {
                     System.out.println("Digite o prefixo do avião: ");
                     prefixo = sc.next();
-                    isValido = Mascara.isValida(prefixo, "[A-Z]{2}[0-9]{4}");
+                    isValido = Mascara.isValida(prefixo, "[A-Z]{3}[0-9]{4}");
                     if (isValido == false) {
-                        System.out.println("Prefixo inválido. Tente novamente com o padrão XX0000");
+                        System.out.println("Prefixo inválido. Tente novamente com o padrão XXX0000");
                     }
                 } while (isValido == false);
                 System.out.println("Digite a capacidade do avião: ");
@@ -75,12 +76,12 @@ public abstract class Aeromodelo {
                 }
                 System.out.println("Digite o id da companhia do avião: ");
                 int idCompanhia = sc.nextInt();
-                Companhia companhia = Companhia.getCompanhiaById(idCompanhia);
+                Companhia companhia = Companhia.getCompanhiaById(idCompanhia, conn);
                 if (companhia == null) {
                     throw new Exception("Companhia não encontrada");
                 }
 
-                new Aviao(0, modelo, marca, prefixo, capacidade, companhia);
+                new Aviao(0, modelo, marca, prefixo, capacidade, companhia, conn);
                 System.out.println("Avião cadastrado com sucesso!");
                 break;
             case 2:
@@ -97,7 +98,7 @@ public abstract class Aeromodelo {
                 System.out.println("Digite a cor do helicóptero: ");
                 cor = sc.next();
 
-                new Helicoptero(0, marca, modelo, capacidade, cor);
+                new Helicoptero(0, marca, modelo, capacidade, cor, conn);
 
                 System.out.println("Helicóptero cadastrado com sucesso!");
                 break;
@@ -115,7 +116,7 @@ public abstract class Aeromodelo {
                     System.out.println("Velocidade inválida. Valor ajustado para " + velocidade);
                 }
 
-                new Jato(0, marca, modelo, cor, velocidade);
+                new Jato(0, marca, modelo, cor, velocidade, conn);
 
                 System.out.println("Jato cadastrado com sucesso!");
                 break;
@@ -125,7 +126,7 @@ public abstract class Aeromodelo {
         }
     }
 
-    public static void AlterarAeromodelo(Scanner sc) throws Exception {
+    public static void AlterarAeromodelo(Scanner sc, Connection conn) throws Exception {
         System.out.println("Qual tipo de Aeromodelo deseja alterar?");
         System.out.println(
                 "1 - Avião \n" +
@@ -137,7 +138,7 @@ public abstract class Aeromodelo {
             case 1:
                 System.out.println("Digite o id do avião: ");
                 int idAviao = sc.nextInt();
-                Aviao aviao = Aviao.getAviaoById(idAviao);
+                Aviao aviao = Aviao.getAviaoById(idAviao, conn);
                 if (aviao == null) {
                     throw new Exception("Avião não encontrado!");
                 } else {
@@ -152,7 +153,7 @@ public abstract class Aeromodelo {
                     System.out.println("Digite a nova informação: ");
                     String novaInfo = sc.next();
 
-                    Aviao.alterarAviao(idAviao, novaInfo, opcaoAviao);
+                    Aviao.alterarAviao(idAviao, novaInfo, opcaoAviao, conn);
 
                     System.out.println("Avião " + aviao.getId() + " alterado com sucesso!");
                 }
@@ -160,7 +161,7 @@ public abstract class Aeromodelo {
             case 2:
                 System.out.println("Digite o id do helicóptero: ");
                 int idHelicoptero = sc.nextInt();
-                Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero);
+                Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero, conn);
                 if (helicoptero == null) {
                     throw new Exception("Helicóptero não encontrado!");
                 } else {
@@ -174,7 +175,7 @@ public abstract class Aeromodelo {
                     System.out.println("Digite a nova informação: ");
                     String novaInfo = sc.next();
 
-                    Helicoptero.alterarHelicoptero(idHelicoptero, novaInfo, opcaoHelicoptero);
+                    Helicoptero.alterarHelicoptero(idHelicoptero, novaInfo, opcaoHelicoptero, conn);
 
                     System.out.println("Helicóptero " + helicoptero.getId() + " alterado com sucesso!");
                 }
@@ -182,7 +183,7 @@ public abstract class Aeromodelo {
             case 3:
                 System.out.println("Digite o id do jato: ");
                 int idJato = sc.nextInt();
-                Jato jato = Jato.getJatoById(idJato);
+                Jato jato = Jato.getJatoById(idJato, conn);
                 if (jato == null) {
                     throw new Exception("Jato não encontrado!");
                 } else {
@@ -196,7 +197,7 @@ public abstract class Aeromodelo {
                     System.out.println("Digite a nova informação: ");
                     String novaInfo = sc.next();
 
-                    Jato.alterarJato(idJato, novaInfo, opcaoJato);
+                    Jato.alterarJato(idJato, novaInfo, opcaoJato, conn);
 
                     System.out.println("Jato " + jato.getId() + " alterado com sucesso!");
                 }
@@ -208,7 +209,7 @@ public abstract class Aeromodelo {
         }
     }
 
-    public static void DeletarAeromodelo(Scanner sc) throws Exception {
+    public static void DeletarAeromodelo(Scanner sc, Connection conn) throws Exception {
         System.out.println("Qual tipo de Aeromodelo deseja excluir?");
         System.out.println(
                 "1 - Avião \n" +
@@ -220,22 +221,22 @@ public abstract class Aeromodelo {
             case 1:
                 System.out.println("Digite o id do avião: ");
                 int idAviao = sc.nextInt();
-                Aviao aviao = Aviao.getAviaoById(idAviao);
+                Aviao aviao = Aviao.getAviaoById(idAviao, conn);
                 if (aviao == null) {
                     throw new Exception("Avião não encontrado!");
                 } else {
-                    Aviao.deletarAviao(idAviao);
+                    Aviao.deletarAviao(idAviao, conn);
                     System.out.println("Avião " + aviao.getId() + " excluído com sucesso!");
                 }
                 break;
             case 2:
                 System.out.println("Digite o id do helicóptero: ");
                 int idHelicoptero = sc.nextInt();
-                Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero);
+                Helicoptero helicoptero = Helicoptero.getHelicopteroById(idHelicoptero, conn);
                 if (helicoptero == null) {
                     throw new Exception("Helicóptero não encontrado!");
                 } else {
-                    Helicoptero.deletarHelicoptero(idHelicoptero);
+                    Helicoptero.deletarHelicoptero(idHelicoptero, conn);
                     System.out.println("Helicóptero " + helicoptero.getId() + " excluído com sucesso!");
                 }
                 break;
@@ -243,11 +244,11 @@ public abstract class Aeromodelo {
             case 3:
                 System.out.println("Digite o id do jato: ");
                 int idJato = sc.nextInt();
-                Jato jato = Jato.getJatoById(idJato);
+                Jato jato = Jato.getJatoById(idJato, conn);
                 if (jato == null) {
                     throw new Exception("Jato não encontrado!");
                 } else {
-                    Jato.deletarJato(idJato);
+                    Jato.deletarJato(idJato, conn);
                     System.out.println("Jato " + jato.getId() + " excluído com sucesso!");
                 }
                 break;
@@ -258,14 +259,14 @@ public abstract class Aeromodelo {
         }
     }
 
-    public static void ListarAeromodelos() throws Exception {
-        System.out.println("====== AEROMODELOS ======");
+    public static void ListarAeromodelos(Connection conn) throws Exception {
+        System.out.println("\n====== AEROMODELOS ======");
         System.out.println("====== Aviões: ");
-        Aviao.imprimirAvioes();
-        System.out.println("====== Helicópteros: ");
-        Helicoptero.imprimirHelicopteros();
-        System.out.println("====== Jatos: ");
-        Jato.imprimirJatos();
+        Aviao.imprimirAvioes(conn);
+        System.out.println("\n====== Helicópteros: ");
+        Helicoptero.imprimirHelicopteros(conn);
+        System.out.println("\n====== Jatos: ");
+        Jato.imprimirJatos(conn);
     }
 
     @Override

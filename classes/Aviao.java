@@ -1,9 +1,9 @@
 package classes;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import db.DAO;
 import utils.DefineTipoUpdate;
 
 public class Aviao extends Aeromodelo {
@@ -11,16 +11,15 @@ public class Aviao extends Aeromodelo {
     private int capacidade;
     private Companhia companhia;
 
-    public Aviao(int id, String modelo, String marca, String prefixo, int capacidade, Companhia companhia)
+    public Aviao(int id, String modelo, String marca, String prefixo, int capacidade, Companhia companhia, Connection conn)
             throws Exception {
         super(id, marca, modelo);
         this.prefixo = prefixo;
         this.capacidade = capacidade;
         this.companhia = companhia;
 
-        Aviao aviao = getAviaoById(id);
-        if (aviao == null) {
-            PreparedStatement stmt = DAO.createConnection().prepareStatement(
+        if (id == 0) {
+            PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO aviao (modelo, marca, prefixo, capacidade, companhia_id) VALUES (?, ?, ?, ?, ?)");
             stmt.setString(1, getModelo());
             stmt.setString(2, getMarca());
@@ -28,7 +27,6 @@ public class Aviao extends Aeromodelo {
             stmt.setInt(4, getCapacidade());
             stmt.setInt(5, getCompanhia().getId());
             stmt.execute();
-            DAO.closeConnection();
         }
     }
 
@@ -56,21 +54,21 @@ public class Aviao extends Aeromodelo {
         this.companhia = companhia;
     }
 
-    public static void imprimirAvioes() throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM aviao");
+    public static void imprimirAvioes(Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM aviao");
         stmt.execute();
 
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
             Aviao aviao = new Aviao(rs.getInt("id"), rs.getString("modelo"), rs.getString("marca"),
                     rs.getString("prefixo"), rs.getInt("capacidade"),
-                    Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+                    Companhia.getCompanhiaById(rs.getInt("companhia_id"), conn),conn);
             System.out.println(aviao);
         }
     }
 
-    public static Aviao getAviaoById(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT id FROM aviao WHERE id = ?");
+    public static Aviao getAviaoById(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM aviao WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
 
@@ -82,26 +80,26 @@ public class Aviao extends Aeromodelo {
                     rs.getString("marca"),
                     rs.getString("prefixo"),
                     rs.getInt("capacidade"),
-                    Companhia.getCompanhiaById(rs.getInt("companhia_id")));
+                    Companhia.getCompanhiaById(rs.getInt("companhia_id"), conn), conn);
             return aviao;
         } else {
             return null;
         }
     }
 
-    public static void alterarAviao(int id, String input, int tipoDado) throws Exception {
+    public static void alterarAviao(int id, String input, int tipoDado, Connection conn) throws Exception {
 
-        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getAviaoById(id));
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getAviaoById(id, conn));
 
-        PreparedStatement stmt = DAO.createConnection()
+        PreparedStatement stmt = conn
                 .prepareStatement("UPDATE aviao SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void deletarAviao(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM aviao WHERE id = ?");
+    public static void deletarAviao(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM aviao WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
     }

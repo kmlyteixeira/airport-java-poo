@@ -1,30 +1,28 @@
 package classes;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import db.DAO;
 import utils.DefineTipoUpdate;
 
 public class Helicoptero extends Aeromodelo {
     private int capacidade;
     private String cor;
 
-    public Helicoptero(int id, String marca, String modelo, int capacidade, String cor) throws Exception {
+    public Helicoptero(int id, String marca, String modelo, int capacidade, String cor, Connection conn) throws Exception {
         super(id, marca, modelo);
         this.capacidade = capacidade;
         this.cor = cor;
 
-        Helicoptero helicoptero = getHelicopteroById(id);
-        if (helicoptero == null) {
-            PreparedStatement stmt = DAO.createConnection()
+        if (id == 0) {
+            PreparedStatement stmt = conn
                     .prepareStatement("INSERT INTO helicoptero (modelo, marca, capacidade, cor) VALUES (?, ?, ?, ?)");
             stmt.setString(1, getModelo());
             stmt.setString(2, getMarca());
             stmt.setInt(3, getCapacidade());
             stmt.setString(4, getCor());
             stmt.execute();
-            DAO.closeConnection();
         }
     }
 
@@ -44,20 +42,20 @@ public class Helicoptero extends Aeromodelo {
         this.cor = cor;
     }
 
-    public static void imprimirHelicopteros() throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM helicoptero");
+    public static void imprimirHelicopteros(Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM helicoptero");
         stmt.execute();
 
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
             Helicoptero helicoptero = new Helicoptero(rs.getInt("id"), rs.getString("marca"), rs.getString("modelo"),
-                    rs.getInt("capacidade"), rs.getString("cor"));
+                    rs.getInt("capacidade"), rs.getString("cor"), conn);
             System.out.println(helicoptero);
         }
     }
 
-    public static Helicoptero getHelicopteroById(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM helicoptero WHERE id = ?");
+    public static Helicoptero getHelicopteroById(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM helicoptero WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
 
@@ -68,27 +66,27 @@ public class Helicoptero extends Aeromodelo {
                     rs.getString("modelo"),
                     rs.getString("marca"),
                     rs.getInt("capacidade"),
-                    rs.getString("cor"));
+                    rs.getString("cor"),
+                    conn);
             return helicoptero;
         } else {
             return null;
         }
     }
 
-    /* AJUSTAR AS ALTERAÇÕES - USAR UM TIPO GENERICO */
-    public static void alterarHelicoptero(int id, String input, int tipoDado) throws Exception {
+    public static void alterarHelicoptero(int id, String input, int tipoDado, Connection conn) throws Exception {
 
-        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHelicopteroById(id));
+        String campo = DefineTipoUpdate.defineCampoUpdate(tipoDado, getHelicopteroById(id, conn));
 
-        PreparedStatement stmt = DAO.createConnection()
+        PreparedStatement stmt = conn
                 .prepareStatement("UPDATE helicoptero SET " + campo + " = ? WHERE id = ?");
         stmt.setString(1, input);
         stmt.setInt(2, id);
         stmt.execute();
     }
 
-    public static void deletarHelicoptero(int id) throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("DELETE FROM helicoptero WHERE id = ?");
+    public static void deletarHelicoptero(int id, Connection conn) throws Exception {
+        PreparedStatement stmt = conn.prepareStatement("DELETE FROM helicoptero WHERE id = ?");
         stmt.setInt(1, id);
         stmt.execute();
     }

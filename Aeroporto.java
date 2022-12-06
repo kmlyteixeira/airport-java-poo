@@ -1,3 +1,4 @@
+import java.sql.Connection;
 import java.util.Scanner;
 
 import classes.Aeromodelo;
@@ -5,9 +6,12 @@ import classes.Companhia;
 import classes.Hangar;
 import classes.Pista;
 import classes.Voo;
+import db.DAO;
 
 public class Aeroporto {
     public static void main(String[] args) throws Exception {
+
+        Connection connection = DAO.createConnection();
 
         Scanner sc = new Scanner(System.in);
         int opcao = 0;
@@ -42,64 +46,64 @@ public class Aeroporto {
 
             switch (opcao) {
                 case 1:
-                    Aeromodelo.CadastrarAeromodelo(sc);
+                    Aeromodelo.CadastrarAeromodelo(sc, connection);
                     break;
                 case 2:
-                    Companhia.CadastrarCompanhia(sc);
+                    Companhia.CadastrarCompanhia(sc, connection);
                     break;
                 case 3:
-                    Hangar.CadastrarHangar(sc);
+                    Hangar.CadastrarHangar(sc, connection);
                     break;
                 case 4:
-                    Voo.CadastrarVoo(sc);
+                    Voo.CadastrarVoo(sc, connection);
                     break;
                 case 5:
-                    Aeromodelo.DeletarAeromodelo(sc);
+                    Aeromodelo.DeletarAeromodelo(sc, connection);
                     break;
                 case 6:
-                    Companhia.DeletarCompanhia(sc);
+                    Companhia.DeletarCompanhia(sc, connection);
                     break;
                 case 7:
-                    Hangar.DeletarHangar(sc);
+                    Hangar.DeletarHangar(sc, connection);
                     break;
                 case 8:
-                    Voo.DeletarVoo(sc);
+                    Voo.DeletarVoo(sc, connection);
                     break;
                 case 9:
-                    Aeromodelo.AlterarAeromodelo(sc);
+                    Aeromodelo.AlterarAeromodelo(sc, connection);
                     break;
                 case 10:
-                    Companhia.AlterarCompanhia(sc);
+                    Companhia.AlterarCompanhia(sc, connection);
                     break;
                 case 11:
-                    Hangar.AlterarHangar(sc);
+                    Hangar.AlterarHangar(sc, connection);
                     break;
                 case 12:
-                    Voo.AlterarVoo(sc);
+                    Voo.AlterarVoo(sc, connection);
                     break;
                 case 13:
-                    Aeromodelo.ListarAeromodelos();
+                    Aeromodelo.ListarAeromodelos(connection);
                     break;
                 case 14:
-                    Companhia.ListarCompanhias();
+                    Companhia.ListarCompanhias(connection);
                     break;
                 case 15:
-                    Hangar.ListarHangares();
+                    Hangar.ListarHangares(connection);
                     break;
                 case 16:
-                    Voo.ListarVoo();
+                    Voo.ListarVoo(connection);
                     break;
                 case 17:
-                    Pista.ListarPistas();
+                    Pista.ListarPistas(connection);
                     break;
                 case 18:
-                    Pista.CadastrarPista(sc);
+                    Pista.CadastrarPista(sc, connection);
                     break;
                 case 19:
-                    Pista.AlterarPista(sc);
+                    Pista.AlterarPista(sc, connection);
                     break;
                 case 20:
-                    Pista.DeletarPista(sc);
+                    Pista.DeletarPista(sc, connection);
                     break;
 
                 case 21:
@@ -111,5 +115,7 @@ public class Aeroporto {
                     break;
             }
         } while (opcao != 21);
+
+        DAO.closeConnection();
     }
 }
