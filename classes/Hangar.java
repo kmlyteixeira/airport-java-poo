@@ -12,15 +12,20 @@ public class Hangar {
     private int id;
     private String local;
 
-    public Hangar(int id, String local, Connection conn) throws Exception {
+    public Hangar(String local, Connection conn) throws Exception {
+        this(0, local);
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO hangar (local) VALUES (?)");
+        stmt.setString(1, getLocal());
+        stmt.execute();
+        ResultSet rs = stmt.getGeneratedKeys();
+        if (rs.next()) {
+            this.setId(rs.getInt(1));
+        }
+    }
+
+    public Hangar(int id, String local) throws Exception {
         this.id = id;
         this.local = local;
-
-        if (id == 0) {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO hangar (local) VALUES (?)");
-            stmt.setString(1, getLocal());
-            stmt.execute();
-        }
     }
 
     public int getId() {
@@ -40,7 +45,8 @@ public class Hangar {
     }
 
     public boolean isOcupado() throws Exception {
-        PreparedStatement stmt = DAO.createConnection().prepareStatement("SELECT * FROM hangar WHERE aviao_id is null and id = ?");
+        PreparedStatement stmt = DAO.createConnection()
+                .prepareStatement("SELECT * FROM hangar WHERE aviao_id is null and id = ?");
         stmt.setInt(1, getId());
         stmt.execute();
 
@@ -59,7 +65,7 @@ public class Hangar {
         System.out.println("====== HANGARES ======");
         ResultSet rs = stmt.getResultSet();
         while (rs.next()) {
-            Hangar hangar = new Hangar(rs.getInt("id"), rs.getString("local"), conn);
+            Hangar hangar = new Hangar(rs.getInt("id"), rs.getString("local"));
             System.out.println(hangar);
         }
     }
@@ -70,20 +76,25 @@ public class Hangar {
         int id = sc.nextInt();
         System.out.println("Qual informação deseja alterar?");
         System.out.println(
-                "1 - Local" +
-                        "\n2 - Adicionar aeronave" +
-                        "\n3 - Desocupar hangar");
+            "1 - Local" +
+            "\n2 - Adicionar aeronave" +
+            "\n3 - Desocupar hangar"
+        );
         int opcao = sc.nextInt();
         switch (opcao) {
             case 1:
                 System.out.println("Digite o novo local:");
                 String local = sc.next();
-                updateHangar(id, local, conn);
+                Hangar hangar = getHangarById(id, conn);
+                hangar.setLocal(local);
+                hangar.updateHangar(conn);
                 break;
 
             case 2:
                 if (Hangar.getHangarById(id, conn).isOcupado()) {
-                    throw new Exception("Hangar já está ocupado! Remova a aeronave do Hangar antes de adicionar outra!");
+                    throw new Exception(
+                        "Hangar já está ocupado! Remova a aeronave do Hangar antes de adicionar outra!"
+                    );
                 }
                 System.out.println("Digite o ID da aeronave que deseja adicionar:");
                 int idAviaoAdd = sc.nextInt();
@@ -109,7 +120,7 @@ public class Hangar {
         System.out.println("====== CADASTRAR HANGAR ======");
         System.out.println("Digite o local do hangar:");
         String local = sc.next();
-        new Hangar(0, local, conn);
+        new Hangar(local, conn);
         System.out.println("Hangar cadastrado com sucesso!");
     }
 
@@ -139,10 +150,10 @@ public class Hangar {
         stmt.execute();
     }
 
-    public static void updateHangar(int id, String input, Connection conn) throws Exception {
+    private void updateHangar(Connection conn) throws Exception {
         PreparedStatement stmt = conn.prepareStatement("UPDATE hangar SET local = ? WHERE id = ?");
-        stmt.setString(1, input);
-        stmt.setInt(2, id);
+        stmt.setString(1, this.local);
+        stmt.setInt(2, this.id);
         stmt.execute();
     }
 
@@ -163,8 +174,7 @@ public class Hangar {
         if (rs.next()) {
             Hangar hangar = new Hangar(
                     rs.getInt("id"),
-                    rs.getString("local"),
-                    conn);
+                    rs.getString("local"));
             return hangar;
         } else {
             return null;
@@ -181,7 +191,7 @@ public class Hangar {
         }
 
         return "\n | ID: " + getId() +
-                "\n | Local: " + getLocal() +
-                "\n | Status: " + (status == true ? "Ocupado" : "Livre");
+               "\n | Local: " + getLocal() +
+               "\n | Status: " + (status == true ? "Ocupado" : "Livre");
     }
 }

@@ -1,4 +1,5 @@
 package utils;
+
 import classes.Aviao;
 import classes.Companhia;
 import classes.Helicoptero;
@@ -7,19 +8,13 @@ import classes.Voo;
 
 public class DefineTipoUpdate {
 
+    // Define o campo que será atualizado no banco de dados - por cla
     public static <T> String defineCampoUpdate(int tipo, T obj) {
 
         String campoUpdate = "";
 
         if (obj instanceof Aviao) {
-            switch (tipo) {
-                case 1: campoUpdate = "modelo"; break;
-                case 2: campoUpdate = "marca"; break;
-                case 3: campoUpdate = "prefixo"; break;
-                case 4: campoUpdate = "capacidade"; break;
-                case 5: campoUpdate = "companhia_id"; break;
-                default: break;
-            }
+            campoUpdate = UpdateAviao.getValue(tipo);
         }
 
         if (obj instanceof Voo) {

@@ -11,6 +11,7 @@ import db.DAO;
 public class Aeroporto {
     public static void main(String[] args) throws Exception {
 
+        // Cria conexão com o banco de dados - para passar para as classes
         Connection connection = DAO.createConnection();
 
         Scanner sc = new Scanner(System.in);
