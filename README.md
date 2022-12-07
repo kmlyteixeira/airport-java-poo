@@ -52,17 +52,17 @@ Este controle será constituído de uma aplicação com Listar, Incluir, Alterar
 TODO LIST - Para não esquecer
 
 1 - Ajustar Metodos de Alteração - usar util methods 
-  - Avião ---OK
-  - Helicoptero --- OK
-  - Jato --- OK
-  - Companhia ---OK
-  - Hangar --- OK
-  - Pista --- OK
-  - Voo --- OK
+ * Avião ---OK
+ * Helicoptero --- OK
+ * Jato --- OK
+ * Companhia ---OK
+ * Hangar --- OK
+ * Pista --- OK
+ * Voo --- OK
 2 - Ajustar ToString - buscar super para compor impressão --- OK
 3 - Adicionar mascaras nas numerações de pista, prefixo do avião, numeração do voo, destino/origem do voo --- OK
 4 - Capacidade e Velocidade - UNSIGNED --- OK
-****** 5 - Comentários + revisão no código
+5 - Comentários + revisão no código
 6 - Ajustar Erros Conexão --- OK
-****** 7 - Exportar Voos cadastrados para txt
-****** 8 - Mensagem de Erro se Hangar estiver ocupado
+7 - Exportar Voos cadastrados para txt --- OK (Ajustar para não sobrepor) --- OK
+8 - Mensagem de Erro se Hangar estiver ocupado --- OK

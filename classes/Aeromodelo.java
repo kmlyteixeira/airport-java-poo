@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import utils.Mascara;
 
+// Classe abstrata que representa um aeromodelo - classe pai de Aviao, Helicoptero e Jato
 public abstract class Aeromodelo {
 
     private int id;
@@ -41,6 +42,7 @@ public abstract class Aeromodelo {
         this.modelo = modelo;
     }
 
+    // Metodo Realiza cadastramento dos filhos - Aviao, Helicoptero e Jato
     public static void CadastrarAeromodelo(Scanner sc, Connection conn) throws Exception {
         String marca, modelo, cor;
         int capacidade;
@@ -126,6 +128,7 @@ public abstract class Aeromodelo {
         }
     }
 
+    // Metodo Realiza alteração dos filhos - Aviao, Helicoptero e Jato
     public static void AlterarAeromodelo(Scanner sc, Connection conn) throws Exception {
         System.out.println("Qual tipo de Aeromodelo deseja alterar?");
         System.out.println(
@@ -209,6 +212,7 @@ public abstract class Aeromodelo {
         }
     }
 
+    // Metodo Realiza exclusão dos filhos - Aviao, Helicoptero e Jato
     public static void DeletarAeromodelo(Scanner sc, Connection conn) throws Exception {
         System.out.println("Qual tipo de Aeromodelo deseja excluir?");
         System.out.println(
@@ -259,6 +263,7 @@ public abstract class Aeromodelo {
         }
     }
 
+    // Metodo Realiza listagem dos filhos - Aviao, Helicoptero e Jato
     public static void ListarAeromodelos(Connection conn) throws Exception {
         System.out.println("\n====== AEROMODELOS ======");
         System.out.println("====== Aviões: ");
@@ -275,15 +280,4 @@ public abstract class Aeromodelo {
                 "\n | Modelo: " + getModelo() +
                 "\n | Marca: " + getMarca();
     }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null || !(object instanceof Aeromodelo)) {
-            return false;
-        }
-        final Aeromodelo other = (Aeromodelo) object;
-
-        return this.id == other.id;
-    }
-
 }

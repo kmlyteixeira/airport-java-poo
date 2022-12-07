@@ -8,6 +8,13 @@ public abstract class DAO {
     
     private static Connection connection;
 
+    public static Connection getConnection() throws SQLException {
+        if (connection == null || !connection.isClosed()) {
+            connection = createConnection();
+        }
+
+        return connection;
+    }
     public static Connection createConnection() {
         try {
             final String URL = "jdbc:mysql://localhost:3306/aeroporto?useTimezone=true&serverTimezone=UTC";
